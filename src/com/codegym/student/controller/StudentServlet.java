@@ -4,6 +4,7 @@ import com.codegym.student.model.Student;
 import com.codegym.student.service.IStudentService;
 import com.codegym.student.service.StudentService;
 
+import javax.servlet.DispatcherType;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,6 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @WebServlet(name = "Servlet", urlPatterns = "/students")
 public class StudentServlet extends HttpServlet {
@@ -31,6 +35,9 @@ public class StudentServlet extends HttpServlet {
                 break;
             case "delete":
                 deleteStudent(request, response);
+                break;
+            case "search":
+                searchStudent(request, response);
                 break;
             default:
                 break;
@@ -54,6 +61,9 @@ public class StudentServlet extends HttpServlet {
                 break;
             case "view":
                 viewStudent(request, response);
+                break;
+            case "search":
+                showSearchStudent(request,response);
                 break;
             default:
                 listStudent(request, response);
@@ -185,7 +195,47 @@ public class StudentServlet extends HttpServlet {
             e.printStackTrace();
         }
     }
+    private void searchStudent(HttpServletRequest request, HttpServletResponse response){
+        String search = request.getParameter("search");
 
+        if (search == null || search.length() == 0){
+            request.setAttribute("message", "Please enter the product name you want to search");
+        }else {
+            Student student = new Student();
+            student.setName(search);
+            List<Student> results = studentService.findAll().stream().filter((Predicate<? super Student>) student).collect(Collectors.toList());
+            System.out.println(results);
+            System.out.println(results.size());
+
+            request.setAttribute("results", results);
+            RequestDispatcher dispatcher;
+            dispatcher = request.getRequestDispatcher("student/search.jsp");
+            try {
+                dispatcher.forward(request, response);
+            } catch (ServletException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    private void showSearchStudent(HttpServletRequest request, HttpServletResponse response){
+        Student student = new Student();
+        RequestDispatcher dispatcher;
+        if(student == null){
+            dispatcher = request.getRequestDispatcher("error-404.jsp");
+        } else {
+            request.setAttribute("student", student);
+            dispatcher = request.getRequestDispatcher("student/edit.jsp");
+        }
+        try {
+            dispatcher.forward(request, response);
+        } catch (ServletException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     private void createStudent(HttpServletRequest request, HttpServletResponse response) {
         String name = request.getParameter("name");
         String email = request.getParameter("email");
@@ -195,7 +245,7 @@ public class StudentServlet extends HttpServlet {
         Student student = new Student(id, name, email, address);
         this.studentService.save(student);
         RequestDispatcher dispatcher = request.getRequestDispatcher("student/create.jsp");
-        request.setAttribute("message", "New customer was created");
+        request.setAttribute("message", "New student was created");
         try {
             dispatcher.forward(request, response);
         } catch (ServletException e) {

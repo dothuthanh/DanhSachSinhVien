@@ -2,7 +2,7 @@
   Created by IntelliJ IDEA.
   User: BipVuong
   Date: 6/22/2020
-  Time: 1:46 PM
+  Time: 5:28 PM
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -11,14 +11,7 @@
     <title>Title</title>
 </head>
 <body>
-<h1>Edit student</h1>
-<p>
-    <c:if test='${requestScope["message"] != null}'>
-        <span class="message">${requestScope["message"]}</span>
-    </c:if>
-</p>
-<p>
-    <a href="/students">Back to student list</a>
+<a href="/students">Add Student</a>
 </p>
 <form method="post">
     <fieldset>
@@ -38,7 +31,7 @@
             </tr>
             <tr>
                 <td></td>
-                <td><input type="submit" value="Update student"></td>
+                <td><input type="submit" value="Add student"></td>
             </tr>
         </table>
     </fieldset>

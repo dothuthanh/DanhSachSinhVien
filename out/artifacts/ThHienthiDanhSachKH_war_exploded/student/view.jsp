@@ -11,7 +11,7 @@
     <title>View </title>
 </head>
 <body>
-<h1>Customer details</h1>
+<h1>Student details</h1>
 <p>
     <a href="/students">Back to customer list</a>
 </p>
